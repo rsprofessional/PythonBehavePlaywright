@@ -5,7 +5,7 @@ Feature: User Registration on Serverest website
 
     Scenario: Demo testing
       Given User logs in to the application
-#      When I navigate to the registration page
+      When Validate the client area page
 #      And I fill in the registration form with valid data
 #      And I submit the registration form
 #      Then I should be redirected to the login page

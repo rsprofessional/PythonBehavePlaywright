@@ -1,16 +1,18 @@
 
 from playwright.sync_api import sync_playwright, expect
 import time
-from elementsPage.general_variables import *
+from  elementsPage.general_variables import *
 
 
 class OpenApplication:
 
-   def launch_browser_and_open_page(self):
+   def launch_browser_and_open_page(self,browser):
          self.playwright = sync_playwright().start()
 
-         if browser.lower() == "chromium":
-             self.browser = self.playwright.chromium.launch(headless=False)
+         if browser.lower() == "chrome":
+             self.browser = self.playwright.chromium.launch(headless=False, channel="chrome")
+         elif browser.lower() == "edge":
+             self.browser = self.playwright.chromium.launch(headless=False, channel="msedge")
          elif browser.lower() == "firefox":
              self.browser = self.playwright.firefox.launch(headless=False)
          elif browser.lower() == "webkit":
@@ -28,17 +30,24 @@ class OpenApplication:
          time.sleep(1)
 
    def login_ui(self):
-        self.page.locator('//*[@id="root"]/div/div/form/small/a').wait_for(state="visible", timeout=5000)
-        self.page.locator('//*[@id="root"]/div/div/form/small/a').click()
-        #validate that is register page
-        titulo = self.page.locator("h2").inner_text()
-        print('>>>>>',titulo)
-        #playwright assertion
-        expect(self.page.locator("h2")).to_have_text('Cadastro')
         # self.page.pause()
-        # self.page.wait_for_timeout(50000)
-        #python assertion
-        assert titulo == 'Cadastro'
-        self.page.wait_for_timeout(5000)
+        # self.page.wait_for_timeout(5000000)
+        self.page.get_by_test_id("email").wait_for(state="visible", timeout=5000)
+        self.page.get_by_test_id("email").fill('rsraulsnts@gmail.com')
+        self.page.get_by_test_id("senha").fill('JiA4ever#yj12')
+        self.page.get_by_test_id("entrar").click()
+        self.page.get_by_role("heading", name="Bem Vindo Raul Santos").wait_for(state="visible", timeout=5000)
+
+
+
+   def validate_client_area_page(self):
+       text =  self.page.get_by_role("heading", name="Bem Vindo Raul Santos").inner_text()
+       assert text == "Bem Vindo Raul Santos"
+       print("assert validation pass----" ,text)
+       self.page.wait_for_timeout(5000)
+
+
+
+
 
 
