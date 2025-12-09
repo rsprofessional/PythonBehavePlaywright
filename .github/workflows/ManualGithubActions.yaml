@@ -2,11 +2,11 @@ name: Manual GitHub Actions Demo Tests - Behave + Playwright
 run-name: ${{ github.actor }} is testing with Behave + Playwright 🚀
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        type: string
-        description: Qual a tag a ser executada?
-        required: true
+    # inputs:
+    #   tag:
+    #     type: string
+    #     description: Qual a tag a ser executada?
+    #     required: true
 
 jobs:
   Manual-GitHub-Actions-Testing:
