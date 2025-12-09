@@ -36,7 +36,7 @@ class OpenApplication:
         self.page.get_by_test_id("email").fill('rsraulsnts@gmail.com')
         self.page.get_by_test_id("senha").fill('JiA4ever#yj12')
         self.page.get_by_test_id("entrar").click()
-        self.page.get_by_role("heading", name="Bem Vindo Raul Santos").wait_for(state="visible", timeout=5000)
+        self.page.get_by_role("heading", name="Bem Vindo Raul Santos").wait_for(state="visible")
 
 
 
