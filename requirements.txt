@@ -1,5 +1,5 @@
 # BDD
-behave==1.2.7
+behave
 
 # Faker para dados falsos
 Faker==23.1.1
