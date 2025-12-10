@@ -2,7 +2,7 @@
 behave
 
 # Faker para dados falsos
-Faker==23.1.1
+Faker
 
 # Relatórios (opcional)
 allure-behave==2.8.16
