@@ -42,6 +42,7 @@ jobs:
       - name: Run Behave tests
         run: |
           mkdir -p reports
+          export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
           behave -f allure_behave.formatter:AllureFormatter -o ./reports -D browser=${{ matrix.browser }} -t @${{ inputs.tag }} \
           PyPwBehave/test-automation-tool/src/features
           # Caso queira Pytest + Playwright:
