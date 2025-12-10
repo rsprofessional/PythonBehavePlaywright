@@ -66,4 +66,4 @@ jobs:
         run: |
           sudo npm install -g allure-commandline
           allure generate ./reports -o ./reports/html --clean
-          allure open ./reports/html
+         
