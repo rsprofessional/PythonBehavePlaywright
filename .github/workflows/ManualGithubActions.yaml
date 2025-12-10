@@ -42,7 +42,7 @@ jobs:
       - name: Run Behave tests
         run: |
           mkdir -p reports
-          behave -f allure_behave.formatter:AllureFormatter -o ./reports -D browser=${{ matrix.browser }} -t @${{ inputs.tag }} tests/
+          behave -f allure_behave.formatter:AllureFormatter -o ./reports -D browser=${{ matrix.browser }} -t @${{ inputs.tag }} features/
           # Caso queira Pytest + Playwright:
           pytest tests/ --alluredir=reports --browser=${{ matrix.browser }}
 
