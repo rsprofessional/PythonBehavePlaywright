@@ -2,7 +2,7 @@ Feature: User Registration on Serverest website
            As a new user
            I want to access the Serverest website
            So that I can register a new account successfull
-
+    @smoke
     Scenario: Demo testing
       Given User logs in to the application
       When Validate the client area page
