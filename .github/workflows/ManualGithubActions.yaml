@@ -10,7 +10,7 @@ on:
 
 jobs:
   Manual-GitHub-Actions-Testing:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
