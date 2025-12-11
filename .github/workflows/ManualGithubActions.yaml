@@ -68,4 +68,13 @@ jobs:
         run: |
           sudo npm install -g allure-commandline
           allure generate ./reports -o ./reports/html --clean
+
+      - name: Upload Allure HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ matrix.browser }}
+          path: ./reports/html
+          retention-days: 2
+
          
