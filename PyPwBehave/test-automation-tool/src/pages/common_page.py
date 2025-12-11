@@ -10,13 +10,13 @@ class OpenApplication:
          self.playwright = sync_playwright().start()
 
          if browser.lower() == "chrome":
-             self.browser = self.playwright.chromium.launch(headless=False, channel="chrome")
+             self.browser = self.playwright.chromium.launch(headless=True, channel="chrome")
          elif browser.lower() == "edge":
-             self.browser = self.playwright.chromium.launch(headless=False, channel="msedge")
+             self.browser = self.playwright.chromium.launch(headless=True, channel="msedge")
          elif browser.lower() == "firefox":
-             self.browser = self.playwright.firefox.launch(headless=False)
+             self.browser = self.playwright.firefox.launch(headless=True)
          elif browser.lower() == "webkit":
-             self.browser = self.playwright.webkit.launch(headless=False)
+             self.browser = self.playwright.webkit.launch(headless=True)
          else:
              raise ValueError("Navegador inválido")
 
