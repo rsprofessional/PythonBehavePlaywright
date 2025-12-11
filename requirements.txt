@@ -8,5 +8,5 @@ Faker
 allure-behave==2.8.16
 
 # Pytest + pytest-bdd se quiser usar Pytest
-pytest==8.4.0
+pytest==7.4.4
 pytest-bdd==6.1.1

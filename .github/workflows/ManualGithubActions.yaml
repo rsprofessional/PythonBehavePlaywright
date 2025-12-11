@@ -45,7 +45,7 @@ jobs:
           behave -f allure_behave.formatter:AllureFormatter -o ./reports -D browser=${{ matrix.browser }} -t @${{ inputs.tag }} \
           PyPwBehave/test-automation-tool/src/features
           # Caso queira Pytest + Playwright:
-          pytest tests/ --alluredir=reports --browser=${{ matrix.browser }} \
+          #pytest tests/ --alluredir=reports --browser=${{ matrix.browser }} \
         
 
       - name: Upload Test Results
