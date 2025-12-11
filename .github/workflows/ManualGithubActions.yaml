@@ -1,5 +1,6 @@
 name: Manual GitHub Actions Demo Tests - Behave + Playwright
 run-name: ${{ github.actor }} is testing with Behave + Playwright 🚀
+
 on:
   workflow_dispatch:
     inputs:
