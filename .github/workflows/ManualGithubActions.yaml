@@ -67,7 +67,7 @@ jobs:
         if: always()
         run: |
           sudo npm install -g allure-commandline
-          allure generate ./reports -o ./reports/html --clean
+         allure generate "reports/**" -o reports/html --clean
 
       - name: Upload Allure HTML Report
         if: always()
