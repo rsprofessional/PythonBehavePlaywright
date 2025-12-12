@@ -10,7 +10,7 @@ class OpenApplication:
          self.playwright = sync_playwright().start()
 
          if browser.lower() == "chrome":
-             self.browser = self.playwright.chromium.launch(headless=True, channel="chrome")
+             self.browser = self.playwright.chromium.launch(headless=False, channel="chrome")
          elif browser.lower() == "edge":
              self.browser = self.playwright.chromium.launch(headless=True, channel="msedge")
          elif browser.lower() == "firefox":
@@ -30,19 +30,20 @@ class OpenApplication:
          time.sleep(1)
 
    def login_ui(self):
-        # self.page.pause()
-        # self.page.wait_for_timeout(5000000)
         self.page.get_by_test_id("email").wait_for(state="visible", timeout=5000)
         self.page.get_by_test_id("email").fill('rsraulsnts@gmail.com')
         self.page.get_by_test_id("senha").fill('JiA4ever#yj12')
+        # self.page.pause()
+        # self.page.wait_for_timeout(5000000)
         self.page.get_by_test_id("entrar").click()
-        self.page.get_by_role("heading", name="Bem Vindo Raul Santos").wait_for(state="visible")
-
-
+        #self.page.get_by_role("heading", name="Bem Vindo Raul Santos").wait_for(state="visible")
+        self.page.get_by_role("heading",name="Serverest Store").wait_for(state="visible")
 
    def validate_client_area_page(self):
-       text =  self.page.get_by_role("heading", name="Bem Vindo Raul Santos").inner_text()
-       assert text == "Bem Vindo Raul Santos"
+       #text =  self.page.get_by_role("heading", name="Bem Vindo Raul Santos").inner_text()
+       text = self.page.get_by_role("heading",name="Serverest Store").inner_text()
+       # assert text == "Bem Vindo Raul Santos"
+       assert text == "Serverest Store"
        print("assert validation pass----" ,text)
        self.page.wait_for_timeout(5000)
 
