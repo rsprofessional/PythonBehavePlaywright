@@ -70,14 +70,16 @@ jobs:
         if: always()
         run: |
           sudo npm install -g allure-commandline
-          allure generate ./reports -o ./reports/html --clean
+          allure generate ./reports -o ./allure-report --clean
 
       - name: Upload Allure HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
-          path: ./reports/html
+          path: ./allure-report
+          retention-days: 2
+
 
 
          
