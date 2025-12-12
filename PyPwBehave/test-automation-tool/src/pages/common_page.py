@@ -10,7 +10,7 @@ class OpenApplication:
          self.playwright = sync_playwright().start()
 
          if browser.lower() == "chrome":
-             self.browser = self.playwright.chromium.launch(headless=False, channel="chrome")
+             self.browser = self.playwright.chromium.launch(headless=True, channel="chrome")
          elif browser.lower() == "edge":
              self.browser = self.playwright.chromium.launch(headless=True, channel="msedge")
          elif browser.lower() == "firefox":
