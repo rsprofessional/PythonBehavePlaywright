@@ -45,30 +45,32 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
           behave -f allure_behave.formatter:AllureFormatter -o ./reports -D browser=${{ matrix.browser }} -t @${{ inputs.tag }} \
           PyPwBehave/test-automation-tool/src/features
-          # Caso queira Pytest + Playwright:
-          #pytest tests/ --alluredir=reports --browser=${{ matrix.browser }} \
-        
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: results-${{matrix.browser}}
+          name: results-${{ matrix.browser }}
           path: ./reports
-          if-no-files-found: ignore
-          retention-days: 2
 
       - name: Download Test Results
         if: always()
         uses: actions/download-artifact@v4
         with:
-          name: results-${{matrix.browser}}
+          name: results-${{ matrix.browser }}
+          path: ./reports
+
+      - name: Debug reports folder
+        if: always()
+        run: |
+          echo "Conteúdo da pasta ./reports:"
+          ls -R ./reports || true
 
       - name: Generate Allure Report
         if: always()
         run: |
           sudo npm install -g allure-commandline
-          allure generate "reports/**" -o reports/html --clean
+          allure generate ./reports -o ./reports/html --clean
 
       - name: Upload Allure HTML Report
         if: always()
@@ -76,6 +78,6 @@ jobs:
         with:
           name: allure-report-${{ matrix.browser }}
           path: ./reports/html
-          retention-days: 2
+
 
          
