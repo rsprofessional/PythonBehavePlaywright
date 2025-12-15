@@ -34,7 +34,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-#         pip install -r requirements.txt
           pip install playwright
           pip install allure-behave
           playwright install
@@ -61,7 +60,7 @@ jobs:
           name: results-${{ matrix.browser }}
           path: allure-results
 
-      #
+
 #      - name: Download Test Results
 #        if: always()
 #        uses: actions/download-artifact@v4
