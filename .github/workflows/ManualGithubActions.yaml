@@ -58,13 +58,14 @@ jobs:
             PyPwBehave/test-automation-tool/src/features
       
 
-      - name: Upload Test Results
+      - name: Upload Allure HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
-          path: allure-report
+          path: allure-report/**
           retention-days: 2
+
 
 
 
