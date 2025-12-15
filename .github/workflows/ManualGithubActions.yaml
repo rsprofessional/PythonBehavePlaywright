@@ -5,9 +5,14 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        type: string
-        description: Qual a tag a ser executada?
+        description: Qual a tag?
         required: true
+        type: choice
+        options:
+          - login
+          - smoke
+          - regression
+
 
 jobs:
   Manual-GitHub-Actions-Testing:
