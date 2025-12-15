@@ -41,10 +41,16 @@ jobs:
 
       - name: Run Behave tests
         run: |
-          mkdir -p reports
+          mkdir -p allure-results
           export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
-          behave -f allure_behave.formatter:AllureFormatter -o ./reports -D browser=${{ matrix.browser }} -t @${{ inputs.tag }} \
-          PyPwBehave/test-automation-tool/src/features
+          behave \
+            --no-capture \
+            -f allure_behave.formatter:AllureFormatter \
+            -o allure-results \
+            -D browser=${{ matrix.browser }} \
+            -t @${{ inputs.tag }} \
+            PyPwBehave/test-automation-tool/src/features
+      
 
       - name: Upload Test Results
         if: always()
@@ -52,33 +58,34 @@ jobs:
         with:
           name: results-${{ matrix.browser }}
           path: ./reports
-
-      - name: Download Test Results
-        if: always()
-        uses: actions/download-artifact@v4
-        with:
-          name: results-${{ matrix.browser }}
-          path: ./reports
+#
+#      - name: Download Test Results
+#        if: always()
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: results-${{ matrix.browser }}
+#          path: ./reports
 
       - name: Debug reports folder
         if: always()
         run: |
           echo "Conteúdo da pasta ./reports:"
-          ls -R ./reports || true
+          ls -R ./reports || truegit add   - name: Download Test Results
 
       - name: Generate Allure Report
         if: always()
         run: |
-          sudo npm install -g allure-commandline
-          allure generate ./reports -o ./allure-report --clean
+          allure generate allure-results -o allure-report --clean
+      
 
       - name: Upload Allure HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
-          path: ./allure-report
+          path: allure-report
           retention-days: 2
+
 
 
 

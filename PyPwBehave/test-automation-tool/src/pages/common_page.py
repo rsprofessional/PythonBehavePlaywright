@@ -24,10 +24,9 @@ class OpenApplication:
          # Open login page
          self.page.goto(url_qa)
          title =  self.page.title()
-         print(" >>> Título da página:", title)
          assert title == "Front - ServeRest"
          expect(self.page).to_have_title("Front - ServeRest")
-         time.sleep(1)
+         print(" >>> Título da página:", title)
 
    def login_ui(self):
         self.page.get_by_test_id("email").wait_for(state="visible", timeout=5000)
