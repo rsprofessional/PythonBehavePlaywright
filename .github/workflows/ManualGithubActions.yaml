@@ -33,11 +33,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-         python -m pip install --upgrade pip
-         pip install -r requirements.txt
-         pip install playwright
-         playwright install
-         npm install -g allure-commandline
+          python -m pip install --upgrade pip
+#          pip install -r requirements.txt
+          pip install playwright
+          pip install allure-behave
+          playwright install
+          npm install -g allure-commandline
+
 
       - name: Run Behave tests
         run: |
@@ -70,7 +72,7 @@ jobs:
         if: always()
         run: |
           echo "Conteúdo da pasta ./reports:"
-          ls -R ./reports || truegit add   - name: Download Test Results
+          ls -R ./reports || true
 
       - name: Generate Allure Report
         if: always()
