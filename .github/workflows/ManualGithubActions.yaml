@@ -44,17 +44,39 @@ jobs:
           npm install -g allure-commandline
 
 
-      - name: Run Behave tests
+      - name: Run Behave tests (DEBUG)
         run: |
+          echo "== Workspace =="
+          pwd
+          echo ""
+
+          echo "== Estrutura do projeto =="
+          ls -R PyPwBehave || true
+          echo ""
+
+          echo "== Rodando Behave SEM TAG =="
           mkdir -p allure-results
-          export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
+
           behave \
-            --no-capture \
+            PyPwBehave/test-automation-tool/src/features \
             -f allure_behave.formatter:AllureFormatter \
-            -o allure-results \
-            -D browser=${{ matrix.browser }} \
-            -t @${{ inputs.tag }} \
-            PyPwBehave/test-automation-tool/src/features
+            -o allure-results
+
+          echo ""
+          echo "== Arquivos gerados no allure-results =="
+          ls -lah allure-results || true
+
+      #      - name: Run Behave tests
+#        run: |
+#          mkdir -p allure-results
+#          export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
+#          behave \
+#            --no-capture \
+#            -f allure_behave.formatter:AllureFormatter \
+#            -o allure-results \
+#            -D browser=${{ matrix.browser }} \
+#            -t @${{ inputs.tag }} \
+#            PyPwBehave/test-automation-tool/src/features
 
       - name: Generate Allure Report
         if: always()
