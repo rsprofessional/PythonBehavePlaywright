@@ -46,7 +46,7 @@ jobs:
       - name: Run Behave tests
         run: |
           mkdir -p allure-results
-          export PYTHONPATH=${{ github.workspace }}/PyPwBehave/test-automation-tool/src:$PYTHONPATH
+          export PYTHONPATH=${{ github.workspace }}/PyPwBehave/test-automation-tool/src
       
           behave PyPwBehave/test-automation-tool/src/features \
             --no-capture \
