@@ -1,12 +1,14 @@
 # BDD
 behave
+playwright
+allure-behave
 
 # Faker para dados falsos
-Faker
+#Faker
 
 # Relatórios (opcional)
-allure-behave==2.8.16
+#allure-behave==2.8.16
 
 # Pytest + pytest-bdd se quiser usar Pytest
-pytest==7.4.4
-pytest-bdd==6.1.1
+#pytest==7.4.4
+#pytest-bdd==6.1.1
