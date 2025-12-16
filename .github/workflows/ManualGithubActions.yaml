@@ -46,7 +46,6 @@ jobs:
       - name: Run Behave tests
         run: |
           mkdir -p allure-results
-#         export PYTHONPATH=${{ github.workspace }}/PyPwBehave/test-automation-tool/src
           export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
 
       
@@ -57,7 +56,7 @@ jobs:
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
 
-
+#         export PYTHONPATH=${{ github.workspace }}/PyPwBehave/test-automation-tool/src
 #      - name: Run Behave tests (DEBUG)
 #        run: |
 #          echo "== Workspace =="
