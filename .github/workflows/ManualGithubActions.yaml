@@ -43,30 +43,42 @@ jobs:
           playwright install
           npm install -g allure-commandline
 
-
-      - name: Run Behave tests (DEBUG)
+      - name: Run Behave tests
         run: |
-          echo "== Workspace =="
-          pwd
-          echo ""
-
-          echo "== Estrutura do projeto =="
-          ls -R PyPwBehave || true
-          echo ""
-
-          echo "== Rodando Behave SEM TAG =="
           mkdir -p allure-results
-
-          behave \
-            PyPwBehave/test-automation-tool/src/features \
+          export PYTHONPATH=${{ github.workspace }}/PyPwBehave/test-automation-tool/src:$PYTHONPATH
+      
+          behave PyPwBehave/test-automation-tool/src/features \
+            --no-capture \
             -f allure_behave.formatter:AllureFormatter \
-            -o allure-results
+            -o allure-results \
+            -D browser=${{ matrix.browser }} \
+            -t @${{ inputs.tag }}
 
-          echo ""
-          echo "== Arquivos gerados no allure-results =="
-          ls -lah allure-results || true
 
-      #      - name: Run Behave tests
+#      - name: Run Behave tests (DEBUG)
+#        run: |
+#          echo "== Workspace =="
+#          pwd
+#          echo ""
+#
+#          echo "== Estrutura do projeto =="
+#          ls -R PyPwBehave || true
+#          echo ""
+#
+#          echo "== Rodando Behave SEM TAG =="
+#          mkdir -p allure-results
+#
+#          behave \
+#            PyPwBehave/test-automation-tool/src/features \
+#            -f allure_behave.formatter:AllureFormatter \
+#            -o allure-results
+#
+#          echo ""
+#          echo "== Arquivos gerados no allure-results =="
+#          ls -lah allure-results || true
+
+#      - name: Run Behave tests
 #        run: |
 #          mkdir -p allure-results
 #          export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
@@ -84,13 +96,20 @@ jobs:
           allure generate allure-results -o allure-report --clean 
 
 
+#      - name: Upload Allure HTML Report
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-report-${{ matrix.browser }}
+#          path: allure-report/**
+#          retention-days: 2
+
       - name: Upload Allure HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
-          path: allure-report/**
-          retention-days: 2
+          path: allure-report
 
 
 
