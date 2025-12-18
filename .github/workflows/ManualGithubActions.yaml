@@ -1,5 +1,8 @@
 name: Manual GitHub Actions Demo Tests - Behave + Playwright
 run-name: ${{ github.actor }} is testing with Behave + Playwright 🚀
+permissions:
+  contents: write
+  pages: write
 
 on:
   workflow_dispatch:
@@ -43,16 +46,16 @@ jobs:
           npm install -g allure-commandline
 
       - name: Run Behave tests
+        working-directory: PyPwBehave/test-automation-tool
         run: |
           mkdir -p allure-results
-          export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
-
-          behave PyPwBehave/test-automation-tool/src/features/Development_python.feature \
+          behave src/features/Development_python.feature \
             --no-capture \
             -f allure_behave.formatter:AllureFormatter \
             -o allure-results \
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
+      
 
       - name: Generate Allure Report
         if: always()
@@ -76,13 +79,13 @@ jobs:
       - name: Deploy Allure Report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v4
-
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_PAT }}
           publish_dir: PyPwBehave/test-automation-tool/allure-report
           publish_branch: gh-pages
           user_name: github-actions
           user_email: github-actions@github.com
+
 
 
 
