@@ -49,10 +49,12 @@ jobs:
         working-directory: PyPwBehave/test-automation-tool
         run: |
           mkdir -p allure-results
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           behave src/features/Development_python.feature \
             --no-capture \
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
+      
       
 
       - name: Generate Allure Report
