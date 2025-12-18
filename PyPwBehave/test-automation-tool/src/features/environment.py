@@ -3,14 +3,6 @@ import os
 from datetime import datetime
 from  elementsPage.general_variables import *
 
-from allure_commons._allure import attach
-
-def after_scenario(context, scenario):
-    try:
-        pass  # seu código existente
-    except KeyError:
-        # evita crash no Allure
-        print(f"Allure KeyError ignorado para: {scenario.name}")
 
 def before_all(context):
     print(">>> Antes de todos os testes")
