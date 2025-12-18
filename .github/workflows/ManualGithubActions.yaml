@@ -44,13 +44,12 @@ jobs:
           npm install -g allure-commandline
 
       - name: Run Behave tests
-        working-directory: PyPwBehave/test-automation-tool
         run: |
           mkdir -p allure-results
           export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
 
       
-          behave src/features \
+          behave PyPwBehave/test-automation-toolsrc/features/Development_python.feature \
             --no-capture \
             -f allure_behave.formatter:AllureFormatter \
             -o allure-results \
