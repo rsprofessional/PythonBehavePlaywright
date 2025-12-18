@@ -52,7 +52,7 @@ jobs:
           behave src/features/Development_python.feature \
             --no-capture \
             -f allure_behave.formatter:AllureFormatter \
-            -o allure-results \
+            -o allure-results/${{ matrix.browser }} \
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
       
@@ -61,7 +61,8 @@ jobs:
         if: always()
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          allure generate allure-results -o allure-report --clean
+          allure generate allure-results/chromium allure-results/firefox allure-results/webkit -o allure-report --clean
+
 
       - name: Debug allure-results content
         if: always()
