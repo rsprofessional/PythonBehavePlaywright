@@ -79,11 +79,10 @@ jobs:
         if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GH_PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: PyPwBehave/test-automation-tool/allure-report
           publish_branch: gh-pages
-          user_name: github-actions
-          user_email: github-actions@github.com
+
 
 
 
