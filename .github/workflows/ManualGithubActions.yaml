@@ -50,7 +50,7 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/PyPwBehave/test-automation-tool/src
 
       
-          behave PyPwBehave/test-automation-tool/src/features \
+          behave src/features \
             --no-capture \
             -f allure_behave.formatter:AllureFormatter \
             -o allure-results \
