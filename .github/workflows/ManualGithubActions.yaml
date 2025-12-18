@@ -51,8 +51,6 @@ jobs:
           mkdir -p allure-results
           behave src/features/Development_python.feature \
             --no-capture \
-            -f allure_behave.formatter:AllureFormatter \
-            -o allure-results/${{ matrix.browser }} \
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
       
