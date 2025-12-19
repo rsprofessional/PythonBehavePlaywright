@@ -41,7 +41,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
           playwright install --with-deps
           npm install -g allure-commandline
@@ -51,12 +51,12 @@ jobs:
         run: |
           mkdir -p allure-results/${{ matrix.browser }}
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-          behave -f allure_behave.formatter:AllureFormatter -o allure-results/${{ matrix.browser }} \
+          export ALLURE_RESULTS_DIR=allure-results/${{ matrix.browser }}
+          behave -f allure_behave.formatter:AllureFormatter \
             src/features/Development_python.feature \
             --no-capture \
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
-      
 
       - name: Generate Allure Report
         working-directory: PyPwBehave/test-automation-tool
@@ -64,7 +64,7 @@ jobs:
           allure generate allure-results/${{ matrix.browser }} \
             -o allure-report/${{ matrix.browser }} --clean
 
-      - name: Upload browser reports as artifacts (temporary)
+      - name: Upload browser reports as artifacts
         uses: actions/upload-artifact@v4
         with:
           name: allure-${{ matrix.browser }}
@@ -75,26 +75,4 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
 
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: reports
 
-      - name: Combine all reports into one folder
-        run: |
-          mkdir -p combined-allure
-          for dir in reports/*; do
-            browser=$(basename "$dir")
-            mv "$dir" combined-allure/$browser
-          done
-
-      - name: Create zip of all reports
-        run: |
-          zip -r allure-reports.zip combined-allure
-
-      - name: Upload final combined Allure report artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-reports
-          path: allure-reports.zip
