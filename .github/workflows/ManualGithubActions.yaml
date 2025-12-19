@@ -1,5 +1,6 @@
 name: Manual GitHub Actions Demo Tests - Behave + Playwright
 run-name: ${{ github.actor }} is testing with Behave + Playwright 🚀
+
 permissions:
   contents: write
   pages: write
@@ -19,6 +20,7 @@ on:
 jobs:
   Manual-GitHub-Actions-Testing:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
@@ -48,34 +50,26 @@ jobs:
       - name: Run Behave tests
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          mkdir -p allure-results
+          mkdir -p allure-results/${{ matrix.browser }}
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           behave src/features/Development_python.feature \
             --no-capture \
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
-      
-      
 
       - name: Generate Allure Report
         if: always()
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          allure generate allure-results/chromium allure-results/firefox allure-results/webkit -o allure-report --clean
+          allure generate allure-results/${{ matrix.browser }} \
+            -o allure-report/${{ matrix.browser }} --clean
 
-
-      - name: Debug allure-results content
-        if: always()
-        run: |
-          echo "Arquivos gerados:"
-          find PyPwBehave/test-automation-tool/allure-results -type f
-
-      - name: Upload Allure HTML Report (artifact)
+      - name: Upload Allure Report (artifact)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
-          path: PyPwBehave/test-automation-tool/allure-report
+          path: PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }}
 
       - name: Deploy Allure Report to GitHub Pages
         if: always()
@@ -84,19 +78,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: PyPwBehave/test-automation-tool/allure-report
           publish_branch: gh-pages
-
-
-
-
-
-
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#

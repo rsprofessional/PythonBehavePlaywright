@@ -6,17 +6,17 @@ from  elementsPage.general_variables import *
 
 class OpenApplication:
 
-   def launch_browser_and_open_page(self,browser):
+   def launch_browser_and_open_page(self, browser, headless_mode):
          self.playwright = sync_playwright().start()
 
          if browser.lower() == "chrome":
-             self.browser = self.playwright.chromium.launch(headless=True, channel="chrome")
+             self.browser = self.playwright.chromium.launch(headless= headless_mode, channel="chrome")
          elif browser.lower() == "edge":
-             self.browser = self.playwright.chromium.launch(headless=True, channel="msedge")
+             self.browser = self.playwright.chromium.launch(headless=headless_mode, channel="msedge")
          elif browser.lower() == "firefox":
-             self.browser = self.playwright.firefox.launch(headless=True)
+             self.browser = self.playwright.firefox.launch(headless=headless_mode)
          elif browser.lower() == "webkit":
-             self.browser = self.playwright.webkit.launch(headless=True)
+             self.browser = self.playwright.webkit.launch(headless=headless_mode)
          else:
              raise ValueError("Navegador inválido")
 

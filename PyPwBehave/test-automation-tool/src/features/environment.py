@@ -7,7 +7,7 @@ from  elementsPage.general_variables import *
 def before_all(context):
     print(">>> Antes de todos os testes")
     context.app = OpenApplication()
-    context.app.launch_browser_and_open_page(chrome)
+    context.app.launch_browser_and_open_page(chrome,headless_mode)
 
 def after_all(context):
     print(">>> Depois de todos os testes")
