@@ -86,6 +86,9 @@ jobs:
             fi
           done
 
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+
       - name: Generate final Allure report
         run: |
           allure generate combined-allure -o final-allure-report --clean
