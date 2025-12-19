@@ -1,8 +1,8 @@
-name: Manual GitHub Actions Demo Tests - Behave +Playwright
+name: Manual GitHub Actions Demo Tests - Behave + Playwright
+run-name: ${{ github.actor }} is testing with Behave + Playwright 🚀
 
 permissions:
   contents: write
-  pages: write
 
 on:
   workflow_dispatch:
@@ -20,20 +20,22 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
@@ -44,7 +46,7 @@ jobs:
           playwright install --with-deps
           npm install -g allure-commandline
 
-      - name: Run tests
+      - name: Run Behave tests
         working-directory: PyPwBehave/test-automation-tool
         run: |
           mkdir -p allure-results/${{ matrix.browser }}
@@ -60,55 +62,37 @@ jobs:
           allure generate allure-results/${{ matrix.browser }} \
             -o allure-report/${{ matrix.browser }} --clean
 
-      - name: Upload report artifact
+      - name: Upload browser reports as artifacts (temporary)
         uses: actions/upload-artifact@v4
         with:
           name: allure-${{ matrix.browser }}
           path: PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }}
 
-  deploy:
+  assemble:
     needs: tests
     runs-on: ubuntu-latest
     if: always()
 
     steps:
-      - uses: actions/checkout@v3
-
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: reports
 
-      - name: Build Pages structure
+      - name: Combine all reports into one folder
         run: |
-          mkdir -p public
-          mv reports/allure-chromium public/chromium
-          mv reports/allure-firefox public/firefox
-          mv reports/allure-webkit public/webkit
+          mkdir -p combined-allure
+          for dir in reports/*; do
+            browser=$(basename "$dir")
+            mv "$dir" combined-allure/$browser
+          done
 
-      - name: Create index.html
+      - name: Create zip of all reports
         run: |
-          cat <<EOF > public/index.html
-          <!DOCTYPE html>
-          <html lang="pt-br">
-          <head>
-            <meta charset="UTF-8">
-            <title>Allure Reports</title>
-          </head>
-          <body>
-            <h1>Allure Reports</h1>
-            <ul>
-              <li><a href="./chromium/">Chromium</a></li>
-              <li><a href="./firefox/">Firefox</a></li>
-              <li><a href="./webkit/">WebKit</a></li>
-            </ul>
-          </body>
-          </html>
-          EOF
+          zip -r allure-reports.zip combined-allure
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload final combined Allure report artifact
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: public
-          publish_branch: gh-pages
+          name: allure-reports
+          path: allure-reports.zip
