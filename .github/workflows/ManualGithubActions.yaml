@@ -81,7 +81,9 @@ jobs:
         run: |
           mkdir -p combined-allure
           for dir in reports/*; do
-            cp -r "$dir"/* combined-allure/
+            if [ -d "$dir" ]; then
+              cp -r "$dir"/* combined-allure/ 2>/dev/null || true
+            fi
           done
 
       - name: Generate final Allure report
