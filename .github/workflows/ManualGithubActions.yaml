@@ -17,7 +17,6 @@ on:
           - regression
 
 jobs:
-
   tests:
     runs-on: ubuntu-latest
     strategy:
@@ -26,7 +25,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup Python 3.12
@@ -46,7 +45,7 @@ jobs:
           playwright install --with-deps
           npm install -g allure-commandline
 
-      - name: Run Behave tests
+      - name: Run Behave tests with Allure
         working-directory: PyPwBehave/test-automation-tool
         run: |
           mkdir -p allure-results/${{ matrix.browser }}
@@ -58,21 +57,39 @@ jobs:
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }}
 
-      - name: Generate Allure Report
-        working-directory: PyPwBehave/test-automation-tool
-        run: |
-          allure generate allure-results/${{ matrix.browser }} \
-            -o allure-report/${{ matrix.browser }} --clean
-
-      - name: Upload browser reports as artifacts
+      - name: Upload individual browser Allure results
         uses: actions/upload-artifact@v4
         with:
           name: allure-${{ matrix.browser }}
-          path: PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }}
+          path: PyPwBehave/test-automation-tool/allure-results/${{ matrix.browser }}
 
   assemble:
     needs: tests
     runs-on: ubuntu-latest
     if: always()
 
+    steps:
+      - name: Checkout repository (needed for paths)
+        uses: actions/checkout@v3
 
+      - name: Download all browser results
+        uses: actions/download-artifact@v4
+        with:
+          path: allure-results
+
+      - name: Combine Allure results
+        run: |
+          mkdir -p combined-allure
+          for dir in allure-results/*; do
+            cp -r "$dir"/* combined-allure/
+          done
+
+      - name: Generate final Allure report
+        run: |
+          allure generate combined-allure -o final-allure-report --clean
+
+      - name: Upload final combined Allure report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-reports
+          path: final-allure-report
