@@ -48,20 +48,30 @@ jobs:
       - name: Run Behave tests with Allure
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          mkdir -p allure-results/${{ matrix.browser }}
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-          export ALLURE_RESULTS_DIR=allure-results/${{ matrix.browser }}
-          behave -f allure_behave.formatter:AllureFormatter \
-            src/features/Development_python.feature \
+          export ALLURE_RESULTS_DIR=$(pwd)/allure-results/${{ matrix.browser }}
+
+          mkdir -p "$ALLURE_RESULTS_DIR"
+
+          behave src/features \
+            -f allure_behave.formatter:AllureFormatter \
+            -o "$ALLURE_RESULTS_DIR" \
             --no-capture \
             -D browser=${{ matrix.browser }} \
-            -t @${{ inputs.tag }} || echo "No tests ran for ${{ matrix.browser }}"
+            -t @${{ inputs.tag }} || true
+
+      - name: Debug Allure results
+        working-directory: PyPwBehave/test-automation-tool
+        run: |
+          echo "Allure results generated:"
+          find allure-results -type f || echo "No files found"
 
       - name: Upload Allure results (por browser)
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-${{ matrix.browser }}
           path: PyPwBehave/test-automation-tool/allure-results/${{ matrix.browser }}
+          if-no-files-found: error
 
   allure-report:
     needs: tests
@@ -71,12 +81,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Install Allure
+      - name: Install Allure CLI
         run: npm install -g allure-commandline
 
       - name: Download Allure results
@@ -102,56 +112,3 @@ jobs:
         with:
           name: allure-report
           path: allure-report.zip
-
-
-      - name: List Allure results
-        run: ls -R allure-results/${{ matrix.browser }} || echo "No results found for ${{ matrix.browser }}"
-
-      - name: Upload individual browser Allure results (if exist)
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-${{ matrix.browser }}
-          path: PyPwBehave/test-automation-tool/allure-results/${{ matrix.browser }}
-          if-no-files-found: ignore
-
-  assemble:
-    needs: tests
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Download all browser results
-        uses: actions/download-artifact@v4
-        with:
-          path: reports
-
-      - name: Combine Allure results
-        run: |
-          mkdir -p combined-allure
-          for dir in reports/*; do
-            if [ -d "$dir" ]; then
-              cp -r "$dir"/* combined-allure/ 2>/dev/null || true
-            fi
-          done
-
-      - name: Install Allure CLI
-        run: npm install -g allure-commandline
-
-      - name: Generate final Allure report (only if results exist)
-        run: |
-          if [ -d combined-allure ] && [ "$(ls -A combined-allure)" ]; then
-            allure generate combined-allure -o final-allure-report --clean
-          else
-            echo "No results to generate Allure report"
-          fi
-
-      - name: Upload final combined Allure report (if exists)
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-reports
-          path: final-allure-report
-          if-no-files-found: ignore
-
