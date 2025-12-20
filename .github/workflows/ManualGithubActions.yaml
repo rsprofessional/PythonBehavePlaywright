@@ -52,14 +52,17 @@ jobs:
       - name: Zip Report
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          cd reports
-          zip -r report-${{ matrix.browser }}.zip ${{ matrix.browser }}
+          echo "Conteúdo da pasta reports:"
+          find reports -type f || echo "Nenhum ficheiro encontrado"
+          zip -r results-${{ matrix.browser }}.zip reports/${{ matrix.browser }}
+      
 
       - name: Upload Tests Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: results-${{ matrix.browser }}
-          path: PyPwBehave/test-automation-tool/reports/report-${{ matrix.browser }}.zip
+          path: PyPwBehave/test-automation-tool/results-${{ matrix.browser }}.zip
           if-no-files-found: error
           retention-days: 2
+
