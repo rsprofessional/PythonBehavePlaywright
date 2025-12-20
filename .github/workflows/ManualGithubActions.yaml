@@ -57,6 +57,53 @@ jobs:
             -D browser=${{ matrix.browser }} \
             -t @${{ inputs.tag }} || echo "No tests ran for ${{ matrix.browser }}"
 
+      - name: Upload Allure results (por browser)
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.browser }}
+          path: PyPwBehave/test-automation-tool/allure-results/${{ matrix.browser }}
+
+  allure-report:
+    needs: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Allure
+        run: npm install -g allure-commandline
+
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          path: allure-results
+
+      - name: Merge Allure results
+        run: |
+          mkdir -p merged-allure-results
+          find allure-results -type f -exec cp {} merged-allure-results \;
+
+      - name: Generate Allure Report
+        run: |
+          allure generate merged-allure-results -o allure-report --clean
+
+      - name: Zip Allure Report
+        run: |
+          zip -r allure-report.zip allure-report
+
+      - name: Upload Allure Report ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report.zip
+
+
       - name: List Allure results
         run: ls -R allure-results/${{ matrix.browser }} || echo "No results found for ${{ matrix.browser }}"
 
@@ -107,3 +154,4 @@ jobs:
           name: allure-reports
           path: final-allure-report
           if-no-files-found: ignore
+
