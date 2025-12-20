@@ -34,20 +34,18 @@ jobs:
           npm install -g allure-commandline
           playwright install --with-deps
 
-      - name: Run Behave Tests
+      - name: Run Behave Tests (HTML simples)
         working-directory: PyPwBehave/test-automation-tool
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-          export REPORT_DIR=$(pwd)/reports/${{ matrix.browser }}
-
-          mkdir -p "$REPORT_DIR"
+          mkdir -p reports/${{ matrix.browser }}
 
           behave src/features \
+            -f behave_html_formatter:HTMLFormatter \
+            -o reports/${{ matrix.browser }}/report.html \
             -D browser=${{ matrix.browser }} \
-            --no-capture \
-            --format html \
-            --outfile "$REPORT_DIR/report.html" \
-            || true
+            --no-capture || true
+      
 
       - name: Zip Report
         working-directory: PyPwBehave/test-automation-tool
