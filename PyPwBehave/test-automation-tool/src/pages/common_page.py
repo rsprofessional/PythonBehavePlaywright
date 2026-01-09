@@ -1,7 +1,7 @@
 from allure_commons.types import AttachmentType
 from playwright.sync_api import sync_playwright, expect
 import time
-import requests
+#import requests
 from  elementsPage.general_variables import *
 import openpyxl
 import allure
