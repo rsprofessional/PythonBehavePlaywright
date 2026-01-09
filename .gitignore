@@ -1,6 +1,10 @@
 ### Example user template template
 ### Example user template
 
+#bat files
+*.bat
+
+
 # IntelliJ project files
 .idea
 *.iml

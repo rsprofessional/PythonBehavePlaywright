@@ -3,6 +3,7 @@ behave
 playwright
 allure-behave
 behave-html-formatter
+allure-python-commons
 
 
 
