@@ -1,13 +1,16 @@
-Feature: User login on Serverest website
-
-    Background:
-      Given Launch browser acess app
-
-
-    Scenario: Demo testing
-      Then User logs in to the application
-      When Validate the client area page
-      Then Close browsers
+#Feature: User login on Serverest website
+#
+#Feature: use data in excel file
+#
+#
+#    Background:
+#      Given Launch browser acess app
+#
+#    @allure.label:TMS-456
+#    @smoke
+#    Scenario: Demo administrator
+#      Given User logs in to the application as administrator
+#      Then Close browsers
 #
 #Feature: Demo Scenario Outline
 #
