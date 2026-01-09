@@ -1,4 +1,5 @@
 chrome= "chrome"
 edge= "edge"
-url_qa = "https://front.serverest.dev/login"
-headless_mode = True
+url_qa = "https://front.serverest.dev"
+headless_mode = False
+
