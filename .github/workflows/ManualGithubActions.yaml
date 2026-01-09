@@ -77,6 +77,10 @@ jobs:
           playwright install --with-deps
           npx playwright install msedge
 
+      - name: Setup PATH for Allure
+        run: echo "$(npm bin -g)" >> $GITHUB_PATH
+
+
       # 6. Executar testes Behave
       - name: Run Behave Tests (Allure)
         working-directory: PyPwBehave/test-automation-tool
