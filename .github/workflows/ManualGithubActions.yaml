@@ -72,23 +72,25 @@ jobs:
         working-directory: PyPwBehave/test-automation-tool
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-          mkdir -p allure-results/${{ matrix.browser }}
+          export ALLURE_RESULTS_DIR=$(pwd)/allure-results/${{ matrix.browser }}
+
+          mkdir -p $ALLURE_RESULTS_DIR
 
           echo "Browser: ${{ matrix.browser }}"
           echo "Tags: ${{ github.event.inputs.tags }}"
+          echo "Allure results dir: $ALLURE_RESULTS_DIR"
 
           if [ "${{ github.event.inputs.tags }}" = "all" ]; then
             behave src/features \
               -f allure_behave.formatter:AllureFormatter \
-              -o allure-results/${{ matrix.browser }} \
               -D browser=${{ matrix.browser }}
           else
             behave src/features \
               -f allure_behave.formatter:AllureFormatter \
-              -o allure-results/${{ matrix.browser }} \
               -D browser=${{ matrix.browser }} \
               --tags "${{ github.event.inputs.tags }}"
           fi
+      
       
 
       # 6. Gerar relatório
