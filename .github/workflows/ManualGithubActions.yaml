@@ -20,7 +20,7 @@ on:
         description: 'Tags do Behave (ex: @smoke or @login). Use all para todas'
         required: true
         default: all
-        type: string
+        type: choice
         options:
           - all
           - smoke
