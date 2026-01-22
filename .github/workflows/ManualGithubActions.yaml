@@ -39,7 +39,7 @@ jobs:
           github.event.inputs.browser == 'all'
           && '["chromium","firefox","webkit","edge"]'
           || format('["{0}"]', github.event.inputs.browser)
-          ) } }
+         ) }}
 
     steps:
       # 1. Checkout
@@ -104,3 +104,31 @@ jobs:
               -D browser=$PW_BROWSER
           else
             behave src/features \
+              -f allure_behave.formatter:AllureFormatter \
+              -D browser=$PW_BROWSER \
+              --tags "${{ github.event.inputs.tags }}"
+          fi
+
+      # 7. Gerar relatório Allure
+      - name: Generate Allure Report
+        if: always()
+        working-directory: PyPwBehave/test-automation-tool
+        run: |
+          allure generate allure-results/${{ matrix.browser }} \
+            -o allure-report/${{ matrix.browser }} --clean
+
+      # 8. Zip relatório
+      - name: Zip Allure Report
+        if: always()
+        working-directory: PyPwBehave/test-automation-tool
+        run: |
+          zip -r allure-report-${{ matrix.browser }}.zip allure-report/${{ matrix.browser }}
+
+      # 9. Upload artefato
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ matrix.browser }}
+          path: PyPwBehave/test-automation-tool/allure-report-${{ matrix.browser }}.zip
+          retention-days: 5
