@@ -91,10 +91,12 @@ jobs:
           if [ "${{ github.event.inputs.tags }}" = "all" ]; then
             behave src/features \
               -f allure_behave.formatter:AllureFormatter \
+              -o "$ALLURE_RESULTS_DIR" \
               -D browser=$PW_BROWSER
           else
             behave src/features \
               -f allure_behave.formatter:AllureFormatter \
+              -o "$ALLURE_RESULTS_DIR" \
               -D browser=$PW_BROWSER \
               --tags "${{ github.event.inputs.tags }}"
           fi
