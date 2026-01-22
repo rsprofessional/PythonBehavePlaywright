@@ -25,6 +25,7 @@ on:
           - smoke
           - feature
           - regression
+          - api
 
 jobs:
   tests:
@@ -52,7 +53,7 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
-      # 3. Setup Node (para Allure)
+      # 3. Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -66,11 +67,11 @@ jobs:
           npm install -g allure-commandline
           playwright install --with-deps
 
-      # 5. Adicionar PATH do npm
+      # 5. Add npm global bin to PATH
       - name: Add npm global bin to PATH
         run: echo "$(npm bin -g)" >> $GITHUB_PATH
 
-      # 6. Executar testes Behave
+      # 6. Run Behave Tests
       - name: Run Behave Tests
         working-directory: PyPwBehave/test-automation-tool
         env:
@@ -90,37 +91,49 @@ jobs:
             export PW_BROWSER=${{ matrix.browser }}
           fi
 
-          if [ "${{ github.event.inputs.tags }}" = "all" ]; then
+          # Diferencia UI vs API tests
+          if [ "${{ github.event.inputs.tags }}" = "api" ]; then
+            # API tests → Behave padrão
             behave src/features \
               --no-capture \
               --no-capture-stderr \
-              -f allure_behave.formatter:AllureFormatter \
-              --alluredir "$ALLURE_RESULTS_DIR" \
-              -D browser=$PW_BROWSER
-          else
-            behave src/features \
-              --no-capture \
-              --no-capture-stderr \
-              -f allure_behave.formatter:AllureFormatter \
-              --alluredir "$ALLURE_RESULTS_DIR" \
               -D browser=$PW_BROWSER \
               --tags "${{ github.event.inputs.tags }}"
+          else
+            # UI tests → Behave + Allure
+            if [ "${{ github.event.inputs.tags }}" = "all" ]; then
+              behave src/features \
+                --no-capture \
+                --no-capture-stderr \
+                -f allure_behave.formatter:AllureFormatter \
+                --alluredir "$ALLURE_RESULTS_DIR" \
+                -D browser=$PW_BROWSER
+            else
+              behave src/features \
+                --no-capture \
+                --no-capture-stderr \
+                -f allure_behave.formatter:AllureFormatter \
+                --alluredir "$ALLURE_RESULTS_DIR" \
+                -D browser=$PW_BROWSER \
+                --tags "${{ github.event.inputs.tags }}"
+            fi
+          fi
 
-      # 7. Gerar relatório Allure
+      # 7. Generate Allure Report
       - name: Generate Allure Report
         if: always()
         working-directory: PyPwBehave/test-automation-tool
         run: |
           allure generate "$ALLURE_RESULTS_DIR" -o allure-report/${{ matrix.browser }} --clean
 
-      # 8. Zip relatório
+      # 8. Zip Allure Report
       - name: Zip Allure Report
         if: always()
         working-directory: PyPwBehave/test-automation-tool
         run: |
           zip -r allure-report-${{ matrix.browser }}.zip allure-report/${{ matrix.browser }}
 
-      # 9. Upload artefato
+      # 9. Upload Allure Report
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v4
