@@ -27,6 +27,8 @@ class OpenApplication:
         enviroment = sheet.cell(row=2, column=5).value
         browsers = sheet.cell(row=2, column=6).value
         headless_mode = sheet.cell(row=2, column=7).value
+        print(userd, passd, user, passw, enviroment,browsers,headless_mode)
+        print('')
         return userd, passd, user, passw, enviroment,browsers,headless_mode
 
     @allure.step("Aceder ao ambiente de QA")
