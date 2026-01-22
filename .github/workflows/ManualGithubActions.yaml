@@ -106,18 +106,17 @@ jobs:
                 --no-capture \
                 --no-capture-stderr \
                 -f allure_behave.formatter:AllureFormatter \
-                --alluredir "$ALLURE_RESULTS_DIR" \
                 -D browser=$PW_BROWSER
             else
               behave src/features \
                 --no-capture \
                 --no-capture-stderr \
                 -f allure_behave.formatter:AllureFormatter \
-                --alluredir "$ALLURE_RESULTS_DIR" \
                 -D browser=$PW_BROWSER \
                 --tags "${{ github.event.inputs.tags }}"
             fi
           fi
+      
 
       # 7. Generate Allure Report
       - name: Generate Allure Report
