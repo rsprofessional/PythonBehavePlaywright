@@ -46,16 +46,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Dependências do sistema (Playwright)
-      - name: Install Ubuntu Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libnss3 libatk-bridge2.0-0 libx11-xcb1 libxcomposite1 \
-            libxdamage1 libxrandr2 libasound2 libpangocairo-1.0-0 \
-            libatk1.0-0 libcups2 libxss1 libgbm1 fonts-liberation \
-            libappindicator3-1 wget unzip
-
       # 3. Python
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -116,6 +106,10 @@ jobs:
         run: |
           allure generate allure-results/${{ matrix.browser }} \
             -o allure-report/${{ matrix.browser }} --clean
+
+      - name: Add npm global bin to PATH
+        run: echo "$(npm bin -g)" >> $GITHUB_PATH
+
 
       # 8. Zip relatório
       - name: Zip Allure Report
