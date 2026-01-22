@@ -6,6 +6,7 @@ behave-html-formatter
 allure-python-commons
 openpyxl
 mysql-connector-python
+browser-use
 
 
 
