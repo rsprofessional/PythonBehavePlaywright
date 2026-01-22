@@ -1,4 +1,4 @@
-import pylab as p
+
 from playwright.sync_api import sync_playwright
 
 
@@ -47,8 +47,9 @@ class ApiTesting:
     #         assert response.status == 201
     #         print(f'user create: {response.status}')
 
-    def testing_api_close(self):
-        p.close()
+    #def testing_api_close(self):
+
+         #p.close()
 
     def testing_api_post(self):
         with sync_playwright() as delete_one:
