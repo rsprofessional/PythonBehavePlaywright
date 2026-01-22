@@ -74,51 +74,55 @@ jobs:
       # 6. Run Behave Tests
       - name: Run Behave Tests
         working-directory: PyPwBehave/test-automation-tool
-        env:
-          ALLURE_RESULTS_DIR: ${{ github.workspace }}/PyPwBehave/test-automation-tool/allure-results/${{ matrix.browser }}
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+          
+          # Criar pastas
+          ALLURE_RESULTS_DIR="$PWD/allure-results/${{ matrix.browser }}"
           mkdir -p "$ALLURE_RESULTS_DIR"
           mkdir -p screenshots
-
+          
           echo "Browser: ${{ matrix.browser }}"
           echo "Tags: ${{ github.event.inputs.tags }}"
-
+          
           # Edge no Linux = Chromium
           if [ "${{ matrix.browser }}" = "edge" ]; then
-            export PW_BROWSER=chromium
+          export PW_BROWSER=chromium
           else
-            export PW_BROWSER=${{ matrix.browser }}
+          export PW_BROWSER=${{ matrix.browser }}
           fi
-
+          
           # Diferencia UI vs API tests
           if [ "${{ github.event.inputs.tags }}" = "api" ]; then
-            # API tests → Behave padrão
-            behave src/features \
-              --no-capture \
-              --no-capture-stderr \
-              -D browser=$PW_BROWSER \
-              --tags "${{ github.event.inputs.tags }}"
+          # API tests → Behave padrão
+          behave src/features \
+           --no-capture \
+           --no-capture-stderr \
+           -D browser=$PW_BROWSER \
+           --tags "${{ github.event.inputs.tags }}"
           else
-            # UI tests → Behave + Allure
-            if [ "${{ github.event.inputs.tags }}" = "all" ]; then
-              behave src/features \
-                --no-capture \
-                --no-capture-stderr \
-                -f allure_behave.formatter:AllureFormatter \
-                -D browser=$PW_BROWSER
-            else
-              behave src/features \
-                --no-capture \
-                --no-capture-stderr \
-                -f allure_behave.formatter:AllureFormatter \
-                -D browser=$PW_BROWSER \
-                --tags "${{ github.event.inputs.tags }}"
-            fi
+          # UI tests → Behave + Allure
+          if [ "${{ github.event.inputs.tags }}" = "all" ]; then
+           behave src/features \
+             --no-capture \
+             --no-capture-stderr \
+             -f allure_behave.formatter:AllureFormatter \
+             -D browser=$PW_BROWSER \
+             -D allure_results_dir="$ALLURE_RESULTS_DIR"
+          else
+           behave src/features \
+             --no-capture \
+             --no-capture-stderr \
+             -f allure_behave.formatter:AllureFormatter \
+             -D browser=$PW_BROWSER \
+             -D allure_results_dir="$ALLURE_RESULTS_DIR" \
+             --tags "${{ github.event.inputs.tags }}"
           fi
-      
-
-      # 7. Generate Allure Report
+          fi
+          
+          
+          
+          # 7. Generate Allure Report
       - name: Generate Allure Report
         if: always()
         working-directory: PyPwBehave/test-automation-tool
