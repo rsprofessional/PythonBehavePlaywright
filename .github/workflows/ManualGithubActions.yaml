@@ -130,7 +130,8 @@ jobs:
         if: always()
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          zip -r allure-report-${{ matrix.browser }}.zip allure-report/${{ matrix.browser }}
+          zip -r allure-report-${{ matrix.browser }}.zip allure-report/${{ matrix.browser }} allure-results/${{ matrix.browser }}
+      
 
       # 9. Upload Allure Report
       - name: Upload Allure Report
