@@ -24,7 +24,7 @@ del /q allure-results\*.html 2>nul
 REM ===============================
 REM Executar testes features/development.feature
 REM ===============================
-behave --no-capture  ^
+behave --no-capture features/development.feature ^
   -f allure_behave.formatter:AllureFormatter ^
   -o allure-results
 

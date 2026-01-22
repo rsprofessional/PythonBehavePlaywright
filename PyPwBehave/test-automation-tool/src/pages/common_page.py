@@ -1,14 +1,15 @@
+import requests
 from allure_commons.types import AttachmentType
 from playwright.sync_api import sync_playwright, expect
-import time
-#import requests
-from  elementsPage.general_variables import *
 import openpyxl
 import allure
 
 
 
+
 class OpenApplication:
+
+
 
     def read_data_excel(self):
         workbook = openpyxl.load_workbook("../src/files/test_data.xlsx")
@@ -43,9 +44,15 @@ class OpenApplication:
          else:
              raise ValueError("Navegador inválido")
 
+         # self.context = self.browser.new_context(record_video_dir="videos/")
+         # self.page = self.context.new_page()
+         self.context = self.browser.new_context()
          self.page = self.browser.new_page()
+         # Start tracing before creating / navigating a page.
+         # self.context.tracing.start(screenshots=True, snapshots=True, sources=True)
          # Open login page
          self.page.goto(enviroment)
+         self.context.tracing.stop(path="trace.zip")
          # allure.attach(self.page.screenshot(path="screenshoot/launchbrowser.png"), name="accessApp", attachment_type=AttachmentType.PNG)
          allure.attach(self.page.screenshot(), name="accessApp",
                        attachment_type=AttachmentType.PNG)
@@ -92,13 +99,31 @@ class OpenApplication:
         # assert text == "Serverest Store"
         print("assert validation pass----" ,text)
 
+
     def login_ui_administrator(self):
             (userd, passd, _, _, _, _, _) = self.read_data_excel()
             # self.page.get_by_test_id("email").wait_for(state="visible", timeout= None)
             self.page.get_by_test_id("email").fill(userd)
             self.page.get_by_test_id("senha").fill(passd)
-            self.page.get_by_test_id("entrar").click()
-            self.page.wait_for_timeout(1000)
+            
+            ###################################################
+            btn_visible = self.page.get_by_test_id("entrar").is_visible()
+            if not btn_visible:
+                    self.page.get_by_test_id("entrar").screenshot(path="files/element.png")
+                    allure.attach(self.page.get_by_test_id("entrar").screenshot(), name="button_entrar",
+                    attachment_type=AttachmentType.PNG)
+                    raise AssertionError("Botão 'Entrar' não está visível")
+            ###################################################
+
+            ###### click button with javascript
+            self.page.get_by_test_id("entrar").evaluate("element => {element.click()}")
+            # self.page.get_by_test_id("entrar").click()
+
+            self.page.wait_for_timeout(2000)
+            ###################################################
+            self.page.screenshot(path="files/page_after_in.png")
+            allure.attach(self.page.screenshot(),name="page_after_in",
+                          attachment_type=AttachmentType.PNG)
             ###################################################### fail so com assert senao fica laranja como broke
             # assert  self.page.get_by_test_id("listar-usuarios").is_visible()
             #######################################################
@@ -163,5 +188,7 @@ class OpenApplication:
     def close_api_all(self):
         self.api.dispose()
         self.playwright.stop()
+
+
 
 

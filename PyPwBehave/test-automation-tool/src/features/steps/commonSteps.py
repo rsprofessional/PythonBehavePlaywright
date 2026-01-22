@@ -16,7 +16,9 @@ def step_validate_home_app(context):
 @Then("Close browsers")
 def close_browsers(context):
     print(">>> Depois de todos os testes")
+    # Stop tracing and export it into a zip archive.
     context.app.close_browser()
+    context.app.playwright.stop()
 
 @Then("Close api connection")
 def close_api_all(context):
