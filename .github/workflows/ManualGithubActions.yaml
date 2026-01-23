@@ -73,7 +73,7 @@ jobs:
 
       # ... (mantenha o início igual até o Step 6)
 
-      # 6. Run Behave Tests
+            # 6. Run Behave Tests
       - name: Run Behave Tests
         working-directory: PyPwBehave/test-automation-tool
         env:
@@ -81,30 +81,22 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           mkdir -p "$ALLURE_RESULTS_DIR"
-          mkdir -p screenshots
           
-          # Configuração do Browser
           if [ "${{ matrix.browser }}" = "edge" ]; then
             export PW_BROWSER=chromium
           else
             export PW_BROWSER=${{ matrix.browser }}
           fi
 
-          # Execução Behave
-          if [ "${{ github.event.inputs.tags }}" = "api" ]; then
-            behave src/features \
-              --no-capture \
-              -D browser=$PW_BROWSER \
-              --tags "${{ github.event.inputs.tags }}"
-          else
-            # Correção: Usar -f e -o para o Allure
-            behave src/features \
-              --no-capture \
-              -f allure_behave.formatter:AllureFormatter \
-              -o "$ALLURE_RESULTS_DIR" \
-              -D browser=$PW_BROWSER \
-              ${{ github.event.inputs.tags != 'all' && format('--tags {0}', github.event.inputs.tags) || '' }}
-          fi
+          # Adicionado "-f progress" para parear com o outfile extra do config ou CLI
+          behave src/features \
+            --no-capture \
+            -f progress \
+            -f allure_behave.formatter:AllureFormatter -o "$ALLURE_RESULTS_DIR" \
+            -D browser=$PW_BROWSER \
+            ${{ github.event.inputs.tags != 'all' && format('--tags {0}', github.event.inputs.tags) || '' }}```
+
+
           
       # 7. Generate Allure Report
       - name: Generate Allure Report
