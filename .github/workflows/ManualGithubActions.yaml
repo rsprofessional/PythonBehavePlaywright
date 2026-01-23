@@ -73,7 +73,7 @@ jobs:
 
       # ... (mantenha o início igual até o Step 6)
 
-            # 6. Run Behave Tests
+      # 6. Run Behave Tests
       - name: Run Behave Tests
         working-directory: PyPwBehave/test-automation-tool
         env:
@@ -88,13 +88,13 @@ jobs:
             export PW_BROWSER=${{ matrix.browser }}
           fi
 
-          # Adicionado "-f progress" para parear com o outfile extra do config ou CLI
           behave src/features \
             --no-capture \
             -f progress \
-            -f allure_behave.formatter:AllureFormatter -o "$ALLURE_RESULTS_DIR" \
+            -f allure_behave.formatter:AllureFormatter \
+            -o "$ALLURE_RESULTS_DIR" \
             -D browser=$PW_BROWSER \
-            ${{ github.event.inputs.tags != 'all' && format('--tags {0}', github.event.inputs.tags) || '' }}```
+            ${{ github.event.inputs.tags != 'all' && format('--tags {0}', github.event.inputs.tags) || '' }}
 
 
           
