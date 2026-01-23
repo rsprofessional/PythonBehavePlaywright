@@ -90,7 +90,6 @@ jobs:
 
           behave src/features \
           --no-capture \
-          -f progress \
           -f allure_behave.formatter:AllureFormatter \
           -o "$ALLURE_RESULTS_DIR" \
           -D browser=$PW_BROWSER \
