@@ -75,25 +75,34 @@ jobs:
 
       # 6. Run Behave Tests
       - name: Run Behave Tests
-        working-directory: PyPwBehave/test-automation-tool
-        env:
-          ALLURE_RESULTS_DIR: allure-results/${{ matrix.browser }}
-        run: |
-          export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-          mkdir -p "$ALLURE_RESULTS_DIR"
-          
-          if [ "${{ matrix.browser }}" = "edge" ]; then
-            export PW_BROWSER=chromium
-          else
-            export PW_BROWSER=${{ matrix.browser }}
-          fi
+  working-directory: PyPwBehave/test-automation-tool
+  env:
+    ALLURE_RESULTS_DIR: allure-results/${{ matrix.browser }}
+  run: |
+    export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+    mkdir -p "$ALLURE_RESULTS_DIR"
 
-          behave src/features \
-          --no-capture \
-          -f allure_behave.formatter:AllureFormatter \
-          -o "$ALLURE_RESULTS_DIR" \
-          -D browser=$PW_BROWSER \
-          $TAGS
+    if [ "${{ matrix.browser }}" = "edge" ]; then
+      export PW_BROWSER=chromium
+    else
+      export PW_BROWSER=${{ matrix.browser }}
+    fi
+
+    if [ "${{ github.event.inputs.tags }}" != "all" ]; then
+      TAGS="--tags @${{ github.event.inputs.tags }}"
+    else
+      TAGS=""
+    fi
+
+    echo "Running with tags: $TAGS"
+
+    behave src/features \
+      --no-capture \
+      -f allure_behave.formatter:AllureFormatter \
+      -o "$ALLURE_RESULTS_DIR" \
+      -D browser=$PW_BROWSER \
+      $TAGS
+
 
 
           
