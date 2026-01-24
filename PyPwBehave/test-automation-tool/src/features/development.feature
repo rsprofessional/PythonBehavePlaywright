@@ -1,4 +1,4 @@
-#Feature: User login on Serverest website
+# Feature: User login on Serverest website
 
 
 #    Background:
@@ -15,9 +15,13 @@
 #    Given I put <thing> in a blender
 #    When I switch the blender on
 #    Then it should transform into <other thing>
-#
-#      Examples: Consumer Electronics
-#        | thing         | other thing |
-#        | iPhone        | toxic waste |
-#        | Galaxy Nexus  | toxic waste |
+
+#         Examples: Consumer Electronics
+#         | thing         | other thing |
+#         | iPhone        | toxic waste |
+#         | Galaxy Nexus  | toxic waste |
+
+#    @smoke
+#    Scenario: Demo testing excel
+#         Given read data from excel     
 
