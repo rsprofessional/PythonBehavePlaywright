@@ -89,7 +89,7 @@ jobs:
           # Environment
           echo "Browser=${{ matrix.browser }}" >  "$ENV_FILE"
           echo "Execution=CI"               >> "$ENV_FILE"
-          echo "Release=release 1.0"        >> "$ENV_FILE"
+          echo "Release=release 1.1"        >> "$ENV_FILE"
           echo "OS=Linux"                   >> "$ENV_FILE"
 
           # Executor
