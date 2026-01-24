@@ -3,16 +3,16 @@ from allure_commons.types import AttachmentType
 from playwright.sync_api import sync_playwright, expect
 import openpyxl
 import allure
-
+from pathlib import Path
 
 
 
 class OpenApplication:
-
-
-
+     
     def read_data_excel(self):
-        workbook = openpyxl.load_workbook("../src/files/test_data.xlsx")
+        BASE_DIR = Path(__file__).resolve().parents[1]  # ajusta conforme sua estrutura
+        EXCEL_PATH = BASE_DIR / "files" / "test_data.xlsx"
+        workbook = openpyxl.load_workbook(EXCEL_PATH)
         sheet = workbook["sheet_data"]
         total_rows = sheet.max_row
         total_columns = sheet.max_column
