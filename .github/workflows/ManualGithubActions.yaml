@@ -81,6 +81,26 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           mkdir -p "$ALLURE_RESULTS_DIR"
+          
+          # 👉 WRITE ALLURE ENVIRONMENT AND EXECUTOR
+          ENV_FILE="$ALLURE_RESULTS_DIR/environment.properties"
+          EXEC_FILE="$ALLURE_RESULTS_DIR/executor.json"
+
+          # Environment
+          echo "Browser=${{ matrix.browser }}" >  "$ENV_FILE"
+          echo "Execution=CI"               >> "$ENV_FILE"
+          echo "Release=release 1.0"        >> "$ENV_FILE"
+          echo "OS=Linux"                   >> "$ENV_FILE"
+
+          # Executor
+          cat <<EOF > "$EXEC_FILE"
+          {
+            "name": "GitHub Actions CI",
+            "type": "ci",
+            "buildName": "Behave Run - ${{ matrix.browser }}",
+            "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
 
           if [ "${{ matrix.browser }}" = "edge" ]; then
             export PW_BROWSER=chromium
