@@ -106,7 +106,7 @@ jobs:
             $TAGS
 
       # 7️⃣ Debug: listar arquivos gerados no allure-results
-      - name: Debug: List Allure Results
+      - name: 
         working-directory: PyPwBehave/test-automation-tool
         env:
           ALLURE_RESULTS_DIR: allure-results/${{ matrix.browser }}
