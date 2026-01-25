@@ -35,7 +35,7 @@ jobs:
       # 1️⃣ Checkout main branch
       - uses: actions/checkout@v4
 
-      # 2️⃣ Checkout gh-pages (somente para histórico)
+      # 2️⃣ Checkout gh-pages (para histórico)
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
@@ -60,7 +60,7 @@ jobs:
           npm install -g allure-commandline
           playwright install --with-deps
 
-      # 6️⃣ Run Behave Tests + History Restore
+      # 6️⃣ Run Behave Tests + Restore History
       - name: Run Behave Tests
         working-directory: PyPwBehave/test-automation-tool
         env:
@@ -86,7 +86,7 @@ jobs:
           EOF
 
           # Restore Allure History (se existir)
-          HISTORY_SRC="gh-pages/${{ matrix.browser }}/history"
+          HISTORY_SRC="../../gh-pages/${{ matrix.browser }}/history"
           if [ -d "$HISTORY_SRC" ]; then
             mkdir -p "$ALLURE_RESULTS_DIR/history"
             cp -r "$HISTORY_SRC/"* "$ALLURE_RESULTS_DIR/history/"
@@ -106,9 +106,10 @@ jobs:
             $TAGS
 
       # 7️⃣ Debug: listar arquivos gerados no allure-results
-      - name:
-        Debug: List Allure Results
+      - name: Debug: List Allure Results
         working-directory: PyPwBehave/test-automation-tool
+        env:
+          ALLURE_RESULTS_DIR: allure-results/${{ matrix.browser }}
         run: |
           echo "Conteúdo de $ALLURE_RESULTS_DIR:"
           ls -l "$ALLURE_RESULTS_DIR"
