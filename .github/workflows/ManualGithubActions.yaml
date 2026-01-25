@@ -105,20 +105,27 @@ jobs:
             -D browser=$PW_BROWSER \
             $TAGS
 
-      # 7️⃣ Generate Allure Report (LOCAL)
+      # 7️⃣ Debug: listar arquivos gerados no allure-results
+      - name: Debug: List Allure Results
+        working-directory: PyPwBehave/test-automation-tool
+        run: |
+          echo "Conteúdo de $ALLURE_RESULTS_DIR:"
+          ls -l "$ALLURE_RESULTS_DIR"
+
+      # 8️⃣ Generate Allure Report (LOCAL)
       - name: Generate Allure Report
         working-directory: PyPwBehave/test-automation-tool
         run: |
           allure generate "$ALLURE_RESULTS_DIR" -o "allure-report/${{ matrix.browser }}" --clean
 
-      # 8️⃣ Upload Artifact ZIP
+      # 9️⃣ Upload Artifact ZIP
       - uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
           path: PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }}
           retention-days: 5
 
-      # 9️⃣ Publish to GitHub Pages
+      # 🔟 Publish to GitHub Pages
       - name: Publish to GitHub Pages
         run: |
           # Remove old report do browser
