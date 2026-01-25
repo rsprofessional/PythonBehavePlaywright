@@ -32,34 +32,35 @@ jobs:
          ) }}
 
     steps:
-      # Checkout main
+      # 1️⃣ Checkout main branch
       - uses: actions/checkout@v4
 
-      # Checkout gh-pages (para history)
+      # 2️⃣ Checkout gh-pages (somente para histórico)
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
 
-      # Python
+      # 3️⃣ Setup Python
       - uses: actions/setup-python@v4
         with:
           python-version: '3.12'
           cache: pip
 
-      # Node
+      # 4️⃣ Setup Node
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # Dependencies
+      # 5️⃣ Install Dependencies
       - name: Install Dependencies
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
           npm install -g allure-commandline
           playwright install --with-deps
 
-      # Run Tests
+      # 6️⃣ Run Behave Tests + History Restore
       - name: Run Behave Tests
         working-directory: PyPwBehave/test-automation-tool
         env:
@@ -68,13 +69,13 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           mkdir -p "$ALLURE_RESULTS_DIR"
 
-          # Environment
-          echo "Browser=${{ matrix.browser }}" >  "$ALLURE_RESULTS_DIR/environment.properties"
-          echo "Execution=CI"               >> "$ALLURE_RESULTS_DIR/environment.properties"
-          echo "Release=release 1.1"        >> "$ALLURE_RESULTS_DIR/environment.properties"
-          echo "OS=Linux"                   >> "$ALLURE_RESULTS_DIR/environment.properties"
+          # Write Environment Properties
+          echo "Browser=${{ matrix.browser }}" > "$ALLURE_RESULTS_DIR/environment.properties"
+          echo "Execution=CI" >> "$ALLURE_RESULTS_DIR/environment.properties"
+          echo "Release=release 1.1" >> "$ALLURE_RESULTS_DIR/environment.properties"
+          echo "OS=Linux" >> "$ALLURE_RESULTS_DIR/environment.properties"
 
-          # Executor
+          # Write Executor JSON
           cat <<EOF > "$ALLURE_RESULTS_DIR/executor.json"
           {
             "name": "GitHub Actions",
@@ -84,43 +85,49 @@ jobs:
           }
           EOF
 
-          # Restore history
-          if [ -d "../../gh-pages/${{ matrix.browser }}/history" ]; then
+          # Restore Allure History (se existir)
+          HISTORY_SRC="gh-pages/${{ matrix.browser }}/history"
+          if [ -d "$HISTORY_SRC" ]; then
             mkdir -p "$ALLURE_RESULTS_DIR/history"
-            cp -r "../../gh-pages/${{ matrix.browser }}/history/"* "$ALLURE_RESULTS_DIR/history/"
+            cp -r "$HISTORY_SRC/"* "$ALLURE_RESULTS_DIR/history/"
           fi
 
-          # Browser
+          # Determine Browser
           [ "${{ matrix.browser }}" = "edge" ] && PW_BROWSER=chromium || PW_BROWSER=${{ matrix.browser }}
 
-          # Tags
+          # Determine Tags
           [ "${{ github.event.inputs.tags }}" != "all" ] && TAGS="--tags @${{ github.event.inputs.tags }}" || TAGS=""
 
+          # Run Behave
           behave src/features \
             -f allure_behave.formatter:AllureFormatter \
             -o "$ALLURE_RESULTS_DIR" \
             -D browser=$PW_BROWSER \
             $TAGS
 
-      # Generate Allure Report (LOCAL)
+      # 7️⃣ Generate Allure Report (LOCAL)
       - name: Generate Allure Report
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          allure generate "$ALLURE_RESULTS_DIR" \
-            -o "allure-report/${{ matrix.browser }}" --clean
+          allure generate "$ALLURE_RESULTS_DIR" -o "allure-report/${{ matrix.browser }}" --clean
 
-      # Upload Artifact (ZIP)
+      # 8️⃣ Upload Artifact ZIP
       - uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
           path: PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }}
           retention-days: 5
 
-      # Copy to GitHub Pages
+      # 9️⃣ Publish to GitHub Pages
       - name: Publish to GitHub Pages
         run: |
+          # Remove old report do browser
           rm -rf gh-pages/${{ matrix.browser }}
-          cp -r PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }} gh-pages/${{ matrix.browser }}
+          mkdir -p gh-pages/${{ matrix.browser }}
+
+          # Copy local report para gh-pages
+          cp -r PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser}}/. \
+             gh-pages/${{ matrix.browser}}
 
           cd gh-pages
           git config user.name "github-actions"
