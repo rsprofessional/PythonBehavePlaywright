@@ -9,23 +9,13 @@ on:
         required: true
         default: all
         type: choice
-        options:
-          - all
-          - chromium
-          - firefox
-          - webkit
-          - edge
+        options: [all, chromium, firefox, webkit, edge]
       tags:
-        description: 'Tags do Behave (ex: @smoke or @login). Use all para todas'
+        description: 'Tags do Behave'
         required: true
         default: all
         type: choice
-        options:
-          - all
-          - smoke
-          - feature
-          - regression
-          - api
+        options: [all, smoke, feature, regression, api]
 
 jobs:
   tests:
@@ -42,38 +32,34 @@ jobs:
          ) }}
 
     steps:
-      # 1. Checkout
-      - name: Checkout
-        uses: actions/checkout@v4
+      # Checkout main
+      - uses: actions/checkout@v4
 
-      # 2. Setup Python
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      # Checkout gh-pages (para history)
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      # Python
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-          cache: 'pip'
+          cache: pip
 
-      # 3. Setup Node
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      # Node
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 4. Instalar dependências
-      - name: Install Requirements
+      # Dependencies
+      - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
           npm install -g allure-commandline
           playwright install --with-deps
 
-      # 5. Add npm global bin to PATH
-      - name: Add npm global bin to PATH
-        run: echo "$(npm bin -g)" >> $GITHUB_PATH
-
-      # ... (mantenha o início igual até o Step 6)
-
-      # 6. Run Behave Tests
+      # Run Tests
       - name: Run Behave Tests
         working-directory: PyPwBehave/test-automation-tool
         env:
@@ -81,71 +67,64 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           mkdir -p "$ALLURE_RESULTS_DIR"
-          
-          # 👉 WRITE ALLURE ENVIRONMENT AND EXECUTOR
-          ENV_FILE="$ALLURE_RESULTS_DIR/environment.properties"
-          EXEC_FILE="$ALLURE_RESULTS_DIR/executor.json"
 
           # Environment
-          echo "Browser=${{ matrix.browser }}" >  "$ENV_FILE"
-          echo "Execution=CI"               >> "$ENV_FILE"
-          echo "Release=release 1.1"        >> "$ENV_FILE"
-          echo "OS=Linux"                   >> "$ENV_FILE"
+          echo "Browser=${{ matrix.browser }}" >  "$ALLURE_RESULTS_DIR/environment.properties"
+          echo "Execution=CI"               >> "$ALLURE_RESULTS_DIR/environment.properties"
+          echo "Release=release 1.1"        >> "$ALLURE_RESULTS_DIR/environment.properties"
+          echo "OS=Linux"                   >> "$ALLURE_RESULTS_DIR/environment.properties"
 
           # Executor
-          cat <<EOF > "$EXEC_FILE"
+          cat <<EOF > "$ALLURE_RESULTS_DIR/executor.json"
           {
-            "name": "GitHub Actions CI",
+            "name": "GitHub Actions",
             "type": "ci",
             "buildName": "Behave Run - ${{ matrix.browser }}",
             "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           }
           EOF
 
-          if [ "${{ matrix.browser }}" = "edge" ]; then
-            export PW_BROWSER=chromium
-          else
-            export PW_BROWSER=${{ matrix.browser }}
+          # Restore history
+          if [ -d "../../gh-pages/${{ matrix.browser }}/history" ]; then
+            mkdir -p "$ALLURE_RESULTS_DIR/history"
+            cp -r "../../gh-pages/${{ matrix.browser }}/history/"* "$ALLURE_RESULTS_DIR/history/"
           fi
 
-          if [ "${{ github.event.inputs.tags }}" != "all" ]; then
-            TAGS="--tags @${{ github.event.inputs.tags }}"
-          else
-            TAGS=""
-          fi
+          # Browser
+          [ "${{ matrix.browser }}" = "edge" ] && PW_BROWSER=chromium || PW_BROWSER=${{ matrix.browser }}
 
-          echo "Running with tags: $TAGS"
+          # Tags
+          [ "${{ github.event.inputs.tags }}" != "all" ] && TAGS="--tags @${{ github.event.inputs.tags }}" || TAGS=""
 
           behave src/features \
-            --no-capture \
             -f allure_behave.formatter:AllureFormatter \
             -o "$ALLURE_RESULTS_DIR" \
             -D browser=$PW_BROWSER \
             $TAGS
 
-
-
-          
-      # 7. Generate Allure Report
+      # Generate Allure Report (LOCAL)
       - name: Generate Allure Report
-        if: always()
         working-directory: PyPwBehave/test-automation-tool
         run: |
-          # O caminho deve bater com o ALLURE_RESULTS_DIR definido acima
-          allure generate "allure-results/${{ matrix.browser }}" -o "allure-report/${{ matrix.browser }}" --clean
+          allure generate "$ALLURE_RESULTS_DIR" \
+            -o "allure-report/${{ matrix.browser }}" --clean
 
-      # 8. Zip Allure Report
-      - name: Zip Allure Report
-        if: always()
-        working-directory: PyPwBehave/test-automation-tool
-        run: |
-          zip -r "allure-report-${{ matrix.browser }}.zip" "allure-report/${{ matrix.browser }}" "allure-results/${{ matrix.browser }}"
-
-      # 9. Upload Allure Report
-      - name: Upload Allure Report
-        if: always()
-        uses: actions/upload-artifact@v4
+      # Upload Artifact (ZIP)
+      - uses: actions/upload-artifact@v4
         with:
           name: allure-report-${{ matrix.browser }}
-          path: PyPwBehave/test-automation-tool/allure-report-${{ matrix.browser }}.zip
+          path: PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }}
           retention-days: 5
+
+      # Copy to GitHub Pages
+      - name: Publish to GitHub Pages
+        run: |
+          rm -rf gh-pages/${{ matrix.browser }}
+          cp -r PyPwBehave/test-automation-tool/allure-report/${{ matrix.browser }} gh-pages/${{ matrix.browser }}
+
+          cd gh-pages
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Allure report (${{ matrix.browser }}) - run ${{ github.run_number }}" || true
+          git push
