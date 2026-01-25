@@ -106,7 +106,8 @@ jobs:
             $TAGS
 
       # 7️⃣ Debug: listar arquivos gerados no allure-results
-      - name: Debug: List Allure Results
+      - name:
+        Debug: List Allure Results
         working-directory: PyPwBehave/test-automation-tool
         run: |
           echo "Conteúdo de $ALLURE_RESULTS_DIR:"
