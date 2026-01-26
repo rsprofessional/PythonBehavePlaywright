@@ -4,7 +4,7 @@ run-name: Scheduled Behave Run - Chromium 🕒
 
 on:
   schedule:
-    - cron: '0 19 * * 1' # toas as segundas feiras as 19h UTC
+    - cron: '0 19 * * 1' # toas as segundas feiras as 19h UTC #
   workflow_dispatch:
     inputs:
       tags:

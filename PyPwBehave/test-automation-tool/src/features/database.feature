@@ -1,6 +1,6 @@
 Feature: Use  database querys mysql
   
-  #@smoke
+   #@smoke
   Scenario: Use mysql
     Given Acess database suceffuly
     When Use a select query
