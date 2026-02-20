@@ -8,10 +8,10 @@ class Database:
     def connect_db(self):
 
         self.sql =  mysql.connector.connect(
-                         host='sql7.freesqldatabase.com',
-                         user='sql7814711',
-                         password='x5bZR5U8vI',
-                         database='sql7814711'
+                         host='sql8.freesqldatabase.com',
+                         user='sql8815488',
+                         password='fHzbj4cK2I',
+                         database='sql8815488'
         )
 
         status = self.sql.is_connected()

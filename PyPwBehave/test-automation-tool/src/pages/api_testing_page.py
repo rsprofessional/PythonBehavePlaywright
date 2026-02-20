@@ -1,24 +1,55 @@
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
+import time
 
 
 
 class ApiTesting:
 
-    def testing_api_get(self):
+    def create_user_validate_it(self):
+    
+        # Cria o usuário e pega o id
+        user_id, email = self.testing_api_post()
+        # Valida o usuário criado neste caso nao faz nada paenas recebe os parametros 
+        self.testing_api_get(user_id, email)
+
+
+
+    def testing_api_get(self, user_id, email):
         with sync_playwright() as p:
             # self.playwright = sync_playwright().start()
+            
             context_request = p.request.new_context()
-            response = context_request.get("http://localhost:8080/api/users/1")
-
-            print(f'>>>> {response.status}')
+            response = context_request.get("https://gorest.co.in/public/v2/users",params={"email": email})
+            print(response.json())
+           
             assert response.status == 200
-            print(f"{response.text()}")
-            text = response.text()
-            print(text)
-            response_id = response.json().get("id")
-            print(f"id: {response_id}")
-            print("")
+            print(f">>>> {response.status}")
+            print(f'retorna o email do user {email}')
+            print(f'retorna o id do user {user_id}')
+
+            # users = response.json()
+            # print(users)
+            # if users:
+            #     print(users[0])
+            # else:
+            #     print("Usuário não encontrado pelo filtro de email")
+
+            # filtered_users = [
+            #        user for user in users if user.get("email") == "raulsantos@gmail.com"
+            #     ]
+
+            # print(filtered_users)
+            # id = filtered_users[0]["id"]
+            # print(id)
+            # assert first_name == "Raul"
+           
+
+            #  print("")
+
+    # def close_api(self):
+    #     self.context_request.dispose()
+    #     self.playwright.stop()        
 
     def testing_api_get_one_user_del(self,user):
         with sync_playwright() as one:
@@ -52,18 +83,39 @@ class ApiTesting:
          #p.close()
 
     def testing_api_post(self):
-        with sync_playwright() as delete_one:
-         context_request = delete_one.request.new_context()
-         response = context_request.post("http://localhost:8080/api/users", data={
-            "email": "raulsantos@gmail.com",
-            "firstName": "Raul",
-            "lastName": "Santos"
-         }, headers={'Content-Type':'application/json'})
+        with sync_playwright() as create_one:
+         context_request = create_one.request.new_context()
 
-         assert response.status == 201
+        # 🔹 email dinâmico (sempre único)
+         email = f"raul_{int(time.time())}@gmail.com"
+
+         response = context_request.post("https://gorest.co.in/public/v2/users", data={
+            "name": "Raul",
+            "email": email,
+            "gender": "male",
+            "status": "active"
+         }, 
+         headers={ "Authorization": "Bearer 3203121efa247b3de86e9973aee21904ac4ef042e8b9527d9207f64b1a96ebd4",
+                  'Content-Type':'application/json'})
+
+         
          print(f'user create: {response.status}')
-         print(response)
-         print('')
+         assert response.status == 201
+        #  print(response)
+        #  print('')
+         body = response.json()
+         user_id = body["id"]
+         email = body["email"]
+
+         print(f"ID criado: {user_id}")
+         print(f"Email criado: {email}")
+
+         return user_id, email
+        
+
+
+
+   
 
 
 

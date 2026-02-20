@@ -1,5 +1,5 @@
 from behave import *
-from pages._ai_testing_page import AiDemo
+from pages.ai_testing_page import AiDemo
 import asyncio
 
 agent_ai = AiDemo()

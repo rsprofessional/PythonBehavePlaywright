@@ -7,6 +7,7 @@ def step_user_navigates_to_application_ui(context):
     print(">>> Antes de todos os testes")
     context.app = OpenApplication()
     context.app.launch_browser_and_open_page()
+    context.page = context.app.page
 
 
 @When('Validate home page app')

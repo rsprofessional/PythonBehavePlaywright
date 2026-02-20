@@ -1,4 +1,4 @@
-import requests
+# import requests
 from allure_commons.types import AttachmentType
 from playwright.sync_api import sync_playwright, expect
 import openpyxl
@@ -28,39 +28,46 @@ class OpenApplication:
         browsers = sheet.cell(row=2, column=6).value
         headless_mode = sheet.cell(row=2, column=7).value
         print(userd, passd, user, passw, enviroment,browsers,headless_mode)
-        print('')
+        # print('')
         return userd, passd, user, passw, enviroment,browsers,headless_mode
+     
 
     @allure.step("Aceder ao ambiente de QA")
     def launch_browser_and_open_page(self):
-         self.playwright = sync_playwright().start()
-         (_, _, _, _, enviroment, browsers, headless_mode) = self.read_data_excel()
-         if browsers.lower() == "chrome":
-             self.browser = self.playwright.chromium.launch(headless= headless_mode, channel="chrome")
-         elif browsers.lower() == "edge":
-             self.browser = self.playwright.chromium.launch(headless=headless_mode, channel="msedge")
-         elif browsers.lower() == "firefox":
-             self.browser = self.playwright.firefox.launch(headless=headless_mode)
-         elif browsers.lower() == "webkit":
-             self.browser = self.playwright.webkit.launch(headless=headless_mode)
-         else:
-             raise ValueError("Navegador inválido")
+     self.playwright = sync_playwright().start()
+     (_, _, _, _, enviroment, browsers, headless_mode) = self.read_data_excel()
 
-         # self.context = self.browser.new_context(record_video_dir="videos/")
-         # self.page = self.context.new_page()
-         self.context = self.browser.new_context()
-         self.page = self.browser.new_page()
-         # Start tracing before creating / navigating a page.
-         # self.context.tracing.start(screenshots=True, snapshots=True, sources=True)
-         # Open login page
-         self.page.goto(enviroment)
-         self.context.tracing.stop(path="trace.zip")
-         # allure.attach(self.page.screenshot(path="screenshoot/launchbrowser.png"), name="accessApp", attachment_type=AttachmentType.PNG)
-         allure.attach(self.page.screenshot(), name="accessApp",
+     if browsers.lower() == "chrome":
+        self.browser = self.playwright.chromium.launch(
+            headless=headless_mode, channel="chrome"
+        )
+     elif browsers.lower() == "edge":
+        self.browser = self.playwright.chromium.launch(
+            headless=headless_mode, channel="msedge"
+        )
+     elif browsers.lower() == "firefox":
+        self.browser = self.playwright.firefox.launch(
+            headless=headless_mode
+        )
+     elif browsers.lower() == "webkit":
+        self.browser = self.playwright.webkit.launch(
+            headless=headless_mode
+        )
+     else:
+        raise ValueError("Navegador inválido")
+
+     self.context = self.browser.new_context()
+     self.page = self.context.new_page()
+
+     self.page.goto(enviroment)
+
+    #  self.context.tracing.stop(path="trace.zip")
+    # allure.attach(self.page.screenshot(path="screenshoot/launchbrowser.png"), name="accessApp", attachment_type=AttachmentType.PNG)
+     allure.attach(self.page.screenshot(), name="accessApp",
                        attachment_type=AttachmentType.PNG)
-         # HTML
-         html_content = "<html><body><h1>Teste2</h1></body></html>"
-         allure.attach(html_content, name="Relatório HTML", attachment_type=AttachmentType.HTML)
+    # HTML
+     html_content = "<html><body><h1>Teste2</h1></body></html>"
+     allure.attach(html_content, name="Relatório HTML", attachment_type=AttachmentType.HTML)
 
     def validate_home_page_app(self):
          # self.page.pause()
@@ -104,9 +111,11 @@ class OpenApplication:
 
     def login_ui_administrator(self):
             (userd, passd, _, _, _, _, _) = self.read_data_excel()
+            print(f'recebi os dados excel: {userd} {passd}')
             # self.page.get_by_test_id("email").wait_for(state="visible", timeout= None)
             self.page.get_by_test_id("email").fill(userd)
             self.page.get_by_test_id("senha").fill(passd)
+            
             
             ###################################################
             btn_visible = self.page.get_by_test_id("entrar").is_visible()
@@ -129,6 +138,8 @@ class OpenApplication:
             ###################################################### fail so com assert senao fica laranja como broke
             # assert  self.page.get_by_test_id("listar-usuarios").is_visible()
             #######################################################
+
+    def validate_lista_usuarios(self,user_mail):        
             button = self.page.get_by_test_id("listar-usuarios")
             assert button.is_visible(), "Botão 'listar-usuario' não está visível"
             # allure.attach(self.page.screenshot(), name="fasilurescreeshoot",
@@ -145,8 +156,8 @@ class OpenApplication:
                 second_td = self.page.locator(f'//*[@id="root"]/div/div/p/table/tbody/tr[{i + 1}]/td[2]').inner_text()
                 print('linhas: ',i,'email: ', second_td)
 
-                if second_td == 'raul.santos@bee-eng.pt':
-                  expect(self.page.locator(f'//*[@id="root"]/div/div/p/table/tbody/tr[{i + 1}]/td[2]')).to_have_text('raul.santos@bee-eng.pt')
+                if second_td == user_mail:
+                  expect(self.page.locator(f'//*[@id="root"]/div/div/p/table/tbody/tr[{i + 1}]/td[2]')).to_have_text(user_mail)
                   print('>>>>>>>>>>>',second_td)
                   self.page.wait_for_timeout(2000)
                   break
