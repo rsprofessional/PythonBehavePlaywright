@@ -14,9 +14,9 @@ def step_impl(context):
 # def step_impl(context):
 #      ApiTesting.testing_api_get()
 
-# @Given('Get Request one User "{user}"')
-# def step_impl(context,user):
-#      ApiTesting.testing_api_get_one_user_del(user)
+@Given('Get Request one User "{user}"')
+def step_impl(context,user):
+     ApiTesting.testing_api_get_one_user_del(user)
 
 
 # @Then('Delete one user')
