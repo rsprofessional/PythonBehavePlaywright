@@ -28,6 +28,7 @@ node --version
 
 O projeto segue a estrutura padrão BDD com Python e Behave, organizada para suportar testes de API, UI e validações de base de dados, de forma modular e escalável.
 
+```
 project-root
 │
 ├── src/
@@ -46,6 +47,8 @@ project-root
 │
 ├── behave.ini                     # Configuração do Behave
 ├── requirements.txt               # Lista de dependências do Python
+
+```
 
 Configuração do behave.ini
 
