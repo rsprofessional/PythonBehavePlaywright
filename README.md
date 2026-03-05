@@ -28,8 +28,8 @@ node --version
 
 O projeto segue a estrutura padrão BDD com Python e Behave, organizada para suportar testes de API, UI e validações de base de dados, de forma modular e escalável.
 
-Project-root
-
+project-root
+│
 ├── src/
 │   ├── features/                  # Contém os arquivos .feature do Behave
 │   │   ├── steps/                 # Contém os step definitions correspondentes às features
@@ -141,7 +141,7 @@ Explicação das opções
 
 --format pretty → output formatado para melhor leitura
 
-Executar Testes com Relatório Allure
+## Executar Testes com Relatório Allure
 Para executar uma feature específica e gerar os resultados do Allure, utilize:
 
 behave --no-capture features/nome_da_feature.feature -f allure_behave.formatter:AllureFormatter -o allure-results
