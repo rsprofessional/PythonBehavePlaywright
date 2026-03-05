@@ -96,7 +96,7 @@ Clicar em Install
 Lista de extensões
 BDD / Cucumber / Behave
 alexkrechik.cucumberautocomplete
-Autocomplete, snippets e suporte para arquivos .feature.
+Autocomplete, snippets e suporte para arquivos .feature. (escolher em settings do plugin pre-release)
 
 Playwright
 ms-playwright.playwright
