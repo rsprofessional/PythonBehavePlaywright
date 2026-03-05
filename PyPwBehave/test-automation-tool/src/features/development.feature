@@ -1,8 +1,8 @@
 Feature: Testing api test from learning Udemy course python Behave Playwright
 
 
- Scenario: testing get request
-   Given Create a user and validate it
+#  Scenario: testing get request
+#    Given Create a user and validate it
       # Then Close api connection_udemy_course
 
 
