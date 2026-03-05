@@ -53,30 +53,33 @@ project-root
 Configuração do behave.ini
 
 O Behave precisa conhecer a estrutura do projeto para localizar corretamente os arquivos de teste e steps. O arquivo behave.ini contém a seguinte configuração:
-
+```
 [behave]
 paths = src/features
 steps_dir = src/features/steps
 logging_level = INFO
 show_skipped = false
 show_timings = true
+```
 
 Dependências do Projeto
 
 O arquivo requirements.txt contém todas as bibliotecas necessárias para executar a suíte:
-## BDD
+
+```
 behave
 playwright
-allure-behave (para gerar reports com dashboard)
+allure-behave 
 behave-html-formatter
 allure-python-commons
-openpyxl (para excel)
+openpyxl 
 mysql-connector-python
-browser-use (para ia)
-
+browser-use 
+```
 pip install -r requirements.txt
 
 A seguir executar o comando faz o download dos browsers necessários para os testes.
+
 playwright install
 
 
@@ -87,9 +90,9 @@ Para melhorar a produtividade e facilitar o desenvolvimento e execução dos tes
 Como instalar
 Abrir o VS Code
 No menu lateral esquerdo, clicar em Extensions (Ctrl + Shift + X)
-Pesquisar pelo ID da extensão ou pelo nome
+Pesquisar pelo ID da extensão ou pelo nome.
 Clicar em Install
-
+```
 Lista de extensões
 BDD / Cucumber / Behave
 alexkrechik.cucumberautocomplete
@@ -127,7 +130,7 @@ Tema visual Dracula para o editor.
 Utilidades
 sleistner.vscode-fileutils
 Facilita criação e manipulação de arquivos no projeto.
-
+```
 
 ## Executar Testes (sem relatório Allure)
 Para executar todos os testes a partir da suite de testes localizada na pasta src, utilize o comando:
@@ -152,13 +155,13 @@ behave --no-capture features/nome_da_feature.feature -f allure_behave.formatter:
 Após executar os testes e gerar os resultados, crie o relatório com:
 
 allure generate allure-results -o allure-report --clean
-
+```
 allure-results → contém os resultados dos testes
 
 allure-report → pasta onde o relatório HTML será gerado
 
 --clean → remove relatórios antigos antes de gerar o novo
-
+```
 Para abrir o relatório no navegador:
 Navegue até à pasta onde o relatório foi gerado
 Execute o comando:
