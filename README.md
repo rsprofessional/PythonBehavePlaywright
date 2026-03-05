@@ -1,4 +1,4 @@
-# Python Behave Playwright
+## Python Behave Playwright
 Este projeto implementa uma suíte de testes automatizados utilizando a abordagem BDD (Behavior Driven Development) com Python e Behave, com foco em garantir a qualidade de APIs, interfaces de usuário (UI) e integração com a base de dados.
 
 O objetivo principal é fornecer uma framework estruturada e escalável para validar funcionalidades críticas de aplicações, promovendo testes claros, legíveis e de fácil manutenção. A suíte combina:
@@ -11,8 +11,8 @@ Validações de base de dados para assegurar que operações críticas persistam
 
 BDD com Behave, fornecendo uma camada de documentação viva onde cenários de teste são escritos em linguagem natural (Gherkin), facilitando o entendimento entre equipes de QA, desenvolvimento e stakeholders.
 
-######
-Instalação e Pré-requisitos
+
+## Instalação e Pré-requisitos
 
 Python 3.12.0 (https://www.python.org/downloads/)
 Verifique a instalação com:
@@ -23,10 +23,13 @@ Necessário para executar testes de API e UI com Playwright.
 Verifique a versão instalada:
 node --version
 
-######
-Estrutura do Projeto
+
+## Estrutura do Projeto
 
 O projeto segue a estrutura padrão BDD com Python e Behave, organizada para suportar testes de API, UI e validações de base de dados, de forma modular e escalável.
+
+Project-root
+
 ├── src/
 │   ├── features/                  # Contém os arquivos .feature do Behave
 │   │   ├── steps/                 # Contém os step definitions correspondentes às features
@@ -58,7 +61,7 @@ show_timings = true
 Dependências do Projeto
 
 O arquivo requirements.txt contém todas as bibliotecas necessárias para executar a suíte:
-# BDD
+## BDD
 behave
 playwright
 allure-behave (para gerar reports com dashboard)
@@ -73,8 +76,8 @@ pip install -r requirements.txt
 A seguir executar o comando faz o download dos browsers necessários para os testes.
 playwright install
 
-######
-Extensões VS Code Recomendadas(plugins)
+
+## Extensões VS Code Recomendadas(plugins)
 
 Para melhorar a produtividade e facilitar o desenvolvimento e execução dos testes, recomenda-se instalar as seguintes extensões no Visual Studio Code.
 
@@ -122,8 +125,8 @@ Utilidades
 sleistner.vscode-fileutils
 Facilita criação e manipulação de arquivos no projeto.
 
-######
-Executar Testes (sem relatório Allure)
+
+## Executar Testes (sem relatório Allure)
 Para executar todos os testes a partir da suite de testes localizada na pasta src, utilize o comando:
 
 behave --no-capture --no-skipped --color --format pretty
